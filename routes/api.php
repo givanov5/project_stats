@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 Use App\Project;
+Use App\Services\JiraApiClient;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -45,7 +46,7 @@ Route::delete('projects/{id}', function($id) {
 });
 
 Route::get('projects', 'ProjectController@showAllProjects');
-Route::get('projects/{id}', 'ProjectController@show');
-Route::post('projects', 'ProjectController@store');
+Route::get('projects/{id}', 'ProjectController@getProject');
+Route::post('projects', 'ProjectController@create');
 Route::put('projects/{id}', 'ProjectController@update');
 Route::delete('projects/{id}', 'ProjectController@delete');

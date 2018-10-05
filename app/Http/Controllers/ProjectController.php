@@ -10,19 +10,37 @@ namespace App\Http\Controllers;
 
 use App\Project;
 use Illuminate\Http\Request;
+use App\Services\JiraApiClient;
 
 class ProjectController extends Controller
 {
+
+  /**
+   * @return \Illuminate\Http\JsonResponse
+   */
   public function showAllProjects()
   {
     return response()->json(Project::all());
   }
 
-  public function getProject($id)
+  /**
+   * @param $id
+   * @param \App\Services\JiraApiClient $jiraApiClient
+   *
+   * @return \Illuminate\Http\JsonResponse
+   */
+  public function getProject($id, JiraApiClient $jiraApiClient)
   {
+    $projectResponse = $jiraApiClient->getProject('BAC');
+    //var_dump($projectResponse);die;
     return  response()->json(Project::find($id));
   }
 
+  /**
+   * @param \Illuminate\Http\Request $request
+   *
+   * @return \Illuminate\Http\JsonResponse
+   */
   public function create(Request $request)
   {
     $this->validate($request, [
@@ -36,6 +54,12 @@ class ProjectController extends Controller
     return response()->json($project, 201);
   }
 
+  /**
+   * @param $id
+   * @param \Illuminate\Http\Request $request
+   *
+   * @return \Illuminate\Http\JsonResponse
+   */
   public function update($id, Request $request)
   {
     $project = Project::findOrFail($id);
@@ -44,6 +68,11 @@ class ProjectController extends Controller
     return response()->json($project, 200);
   }
 
+  /**
+   * @param $id
+   *
+   * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+   */
   public function delete($id)
   {
     Project::findOrFail($id)->delete();
