@@ -31,8 +31,14 @@ class ProjectController extends Controller
    */
   public function getProject($id, JiraApiClient $jiraApiClient)
   {
-    $projectResponse = $jiraApiClient->getProject('BAC');
-    //var_dump($projectResponse);die;
+    //$projectResponse = $jiraApiClient->getProject('BAC');
+    $projectResponse = $jiraApiClient->getProjects();
+
+    $jql = 'project = KLR AND status not in (Closed, Completed, Done, Resolved) ORDER BY project';
+    $projectResponse = $jiraApiClient->search($jql);
+
+    echo '<pre>';
+    //var_dump($projectResponse['body']['total']);die;
     return  response()->json(Project::find($id));
   }
 

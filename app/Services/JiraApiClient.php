@@ -2,117 +2,68 @@
 /**
  * Created by PhpStorm.
  * User: dev
- * Date: 05.10.18
- * Time: 10:29
+ * Date: 08.10.18
+ * Time: 15:42
  */
 
 namespace App\Services;
+use Unirest\Request;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request;
-
-/**
- * Class JiraApiClient
- *
- * @package App\Services
- */
-class JiraApiClient extends Client
-{
-  private $client = null;
+class JiraApiClient {
 
   protected $username = NULL;
   protected $password = NULL;
   protected $apiUrl = NULL;
+  protected $headers = [];
 
-  /**
-   * JiraApiClient constructor.
-   *
-   * Constructor.
-   *
-
-   * @return JiraApiClient
-   */
   public function __construct() {
+
     $username = config('jira.auth.basic.username');
     $password = config('jira.auth.basic.password');
     $apiUrl = config('jira.host');
+    //var_dump($apiUrl);die;
 
     $this->username = $username;
     $this->password = $password;
-    $this->apiUrl = $apiUrl;
+    $this->apiUrl = $apiUrl . '/rest/api/3/';
 
-    parent::__construct(['base_url' => $apiUrl . '/rest/api/2/']);
-    $this->setDefaultOption('auth', array($username, $password, 'Basic'));
-    $this->setDefaultOption('headers', array(
-      'Content-Type' => 'application/json',
-      'Accept' => '*'
-    ));
+    $jiraCredentialsEncoded = base64_encode($username . ':' . $password);
+
+    $this->headers = [
+      'Accept' => 'application/json',
+      'Authorization' => 'Basic '. $jiraCredentialsEncoded
+    ];
   }
 
-  /**
-   * Requests a specific issue
-   *
-   * @param string issueKey
-   *   The unique issue identifier (eg JIRA-123)
-   *
-   * @return array
-   *   The response, including results.
-   */
   public function getIssue($issueKey) {
-    /** @var Request $request */
-    $request = $this->createRequest('GET','issue/' . $issueKey);
-    $response = $this->send($request);
-    $data = $response->json();
+    $response = Request::get(
+      $this->apiUrl . '/issue/' . $issueKey,
+      $this->headers
+    );
 
-    return $data;
+    return $response;
   }
 
-  /**
-   * Requests an Issue object for a specific project issue type.
-   *
-   * @param string $projectIds
-   *   A comma separated list of project Ids
-   *
-   * @param string $projectKeys
-   *   A comma separated list of project keys
-   *
-   * @param array $issueTypeIds
-   *   An array of issuetypeIds
-   *
-   * @param array $issueTypeNames
-   *   An array of issuetypeNames
-   *
-   * @return array
-   *  The response, including results
-   */
-  public function createMeta($projectIds=NULL, $projectKeys=NULL, $issueTypeIds=NULL, $issuetypeNames=NULL) {
+  public function getProjects() {
+    $response = Request::get(
+      $this->apiUrl . '/project',
+      $this->headers
+    );
 
-    $queryString = 'projectIds=' . $projectIds . '&projectKeys=' . $projectKeys . '&issuetypeIds=' . $issueTypeIds . '&issuetypeNames=' . $issuetypeNames;
-    $queryString .= '&expand=projects.issuetypes.fields';
+    $result = json_decode(json_encode($response),true);
 
-    $request = $this->createRequest('GET','issue/createmeta?' . $queryString);
-    $response = $this->send($request);
-    $data = $response->json();
-
-    return $data;
+    return $result;
   }
-  /**
-   * Gets a Project
-   *
-   * @param string $projectKey
-   *  The project ID or Key
-   *
-   * @return array
-   *  The response, including results
-   */
+
   public function getProject($projectKey) {
+    $response = Request::get(
+      $this->apiUrl . '/project/' . $projectKey,
+      $this->headers
+    );
 
-    $request = $this->createRequest('GET','project/' . $projectKey);
-    $response = $this->send($request);
-    $data = $response->json();
+    $result = json_decode(json_encode($response),true);
 
-    return $data;
+    return $result;
   }
 
   /**
@@ -141,18 +92,27 @@ class JiraApiClient extends Client
    */
   public function search($jql, $offset=0, $limit=50, $validateQuery=true, $fields="", $expand="") {
 
-    $fields = array(
+    $fields = [
       "jql" => $jql,
-      "startAt" => $offset,
+    /*  "startAt" => $offset,
       "maxResults" => $limit,
-      "fields" => array($fields),
-      "expand" => array($expand),
-    );
-    $request = $this->createRequest('POST','search');
+      "fields" => [$fields],
+      "expand" => [$expand],*/
+    ];
+    /*$request = $this->createRequest('POST','search');
     $request->setBody(Stream::factory(json_encode($fields)));
     $response = $this->send($request);
-    $data = $response->json();
+    $data = $response->json();*/
+    //$fields = json_encode($fields);
 
-    return $data;
+    $response = Request::get(
+      $this->apiUrl . '/search',
+      $this->headers,
+      $fields
+    );
+
+    $result = json_decode(json_encode($response),true);
+
+    return $result;
   }
 }

@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 Use App\Project;
-Use App\Services\JiraApiClient;
+Use App\Services\JiraApiClient2;
 /*
 |--------------------------------------------------------------------------
 | API Routes
