@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-Use App\Project;
-Use App\Services\JiraApiClient2;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,35 +16,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('projects', function() {
-  // If the Content-Type and Accept headers are set to 'application/json',
-  // this will return a JSON structure. This will be cleaned up later.
-  return Project::all();
-});
-
-Route::get('projects/{id}', function($id) {
-  return Project::find($id);
-});
-
-Route::post('projects', function(Request $request) {
-  return Project::create($request->all);
-});
-
-Route::put('projects/{id}', function(Request $request, $id) {
-  $project = Project::findOrFail($id);
-  $project->update($request->all());
-
-  return $project;
-});
-
-Route::delete('projects/{id}', function($id) {
-  Project::find($id)->delete();
-
-  return 204;
-});
-
-Route::get('projects', 'ProjectController@showAllProjects');
-Route::get('projects/{id}', 'ProjectController@getProject');
-Route::post('projects', 'ProjectController@create');
-Route::put('projects/{id}', 'ProjectController@update');
-Route::delete('projects/{id}', 'ProjectController@delete');
+Route::get('projects/show', 'ProjectController@showAllProjects');
+Route::get('projects/import', 'ProjectController@importAllProjects');
+Route::get('projects/process', 'ProjectController@processProject');
+Route::get('projects/reset', 'ProjectController@resetProcessedProjects');
+Route::get('projects/get/{id}', 'ProjectController@getProject');
+Route::post('projects/create', 'ProjectController@create');
+Route::put('projects/update/{id}', 'ProjectController@update');
+Route::delete('projects/delete/{id}', 'ProjectController@delete');

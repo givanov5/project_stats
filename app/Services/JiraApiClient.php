@@ -94,16 +94,11 @@ class JiraApiClient {
 
     $fields = [
       "jql" => $jql,
-    /*  "startAt" => $offset,
+      /*"startAt" => $offset,
       "maxResults" => $limit,
       "fields" => [$fields],
       "expand" => [$expand],*/
     ];
-    /*$request = $this->createRequest('POST','search');
-    $request->setBody(Stream::factory(json_encode($fields)));
-    $response = $this->send($request);
-    $data = $response->json();*/
-    //$fields = json_encode($fields);
 
     $response = Request::get(
       $this->apiUrl . '/search',
