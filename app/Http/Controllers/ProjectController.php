@@ -19,13 +19,11 @@ class ProjectController extends Controller
 
   public function __construct()
   {
-    //parent::__construct();
-
     $this->projectModel = new Project;
   }
 
-  public function importAllProjects(JiraApiClient $jiraApiClient){
-
+  public function importAllProjects(JiraApiClient $jiraApiClient)
+  {
     $projectsResponse = $jiraApiClient->getProjects();
     if (!empty($projectsResponse['body'])) {
       foreach ($projectsResponse['body'] as $project) {
@@ -39,12 +37,11 @@ class ProjectController extends Controller
           'projectId' => $projectKey,
           'tasksCompleted' => $totalCompletedTasks,
           'tasksTodo' => $totalNotCompletedTasks,
+          'isProcessed' => 0,
           'isCompleted' => 0
         ]);
       }
     }
-    //var_dump($projectResponse);die;
-
     return response()->json(['message' => 'All Jira Projects Imported!'], 200);
   }
 
@@ -57,18 +54,17 @@ class ProjectController extends Controller
       $projectKey = $projectArr['projectId'];
       $fieldsToUpdate = [];
 
-      $jqlNotCompetedTasks = 'project = ' . $projectKey . ' AND status not in (Closed, Completed, Done, Resolved) ORDER BY project';
-      //var_dump($jqlNotCompetedTasks);die;
+      $jqlNotCompetedTasks = 'project = "' . $projectKey . '" AND status not in (Closed, Completed, Done, Resolved) ORDER BY project';
+      //var_dump($projectArr);die;
       $projectResponse = $jiraApiClient->search($jqlNotCompetedTasks);
       if (!empty($projectResponse['body'])) {
         //var_dump($projectResponse['body']);die;
         $fieldsToUpdate['tasksTodo'] = $projectResponse['body']['total'];
       }
 
-      $jqlCompletedTasks = 'project = ' . $projectKey . ' AND status in (Closed, Completed, Done, Resolved) ORDER BY project';
+      $jqlCompletedTasks = 'project = "' . $projectKey . '" AND status in (Closed, Completed, Done, Resolved) ORDER BY project';
       $projectResponse = $jiraApiClient->search($jqlCompletedTasks);
       if (!empty($projectResponse['body'])) {
-        //var_dump($totalCompletedTasks);
         $fieldsToUpdate['tasksCompleted'] = $projectResponse['body']['total'];
       }
       $fieldsToUpdate['isProcessed'] = 1;
@@ -97,21 +93,11 @@ class ProjectController extends Controller
 
   /**
    * @param $id
-   * @param \App\Services\JiraApiClient $jiraApiClient
    *
    * @return \Illuminate\Http\JsonResponse
    */
-  public function getProject($id, JiraApiClient $jiraApiClient)
+  public function getProject($id)
   {
-
-    //$projectResponse = $jiraApiClient->getProject('BAC');
-    //$projectResponse = $jiraApiClient->getProjects();
-
-    $jql = 'project = ' . $id . ' AND status not in (Closed, Completed, Done, Resolved) ORDER BY project';
-    $projectResponse = $jiraApiClient->search($jql);
-
-    echo '<pre>';
-    //var_dump($projectResponse['body']['total']);die;
     return  response()->json(Project::find($id));
   }
 

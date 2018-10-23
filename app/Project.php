@@ -24,4 +24,11 @@ class Project extends Model
     {
       return static::query()->update(['isProcessed' => 0]);
     }
+
+    public function getProjectStats($id)
+    {
+      return static::where('isProcessed', 1)
+        ->where('id', $id)
+        ->get();
+    }
 }

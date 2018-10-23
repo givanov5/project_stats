@@ -160,6 +160,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\JiraServiceProvider::class,
+        /* Admin service providers */
+        TCG\Voyager\VoyagerServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
 
     ],
 

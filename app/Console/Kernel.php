@@ -26,8 +26,10 @@ class Kernel extends ConsoleKernel
     {
       // $schedule->command('inspire')
       //          ->hourly();
+      $schedule->call('\App\Http\Controllers\ProjectController@importAllProjects')->weekly();
       $schedule->call('\App\Http\Controllers\ProjectController@processProject')->everyMinute();
-      $schedule->call('\App\Http\Controllers\ProjectController@resetProcessedProjects')->weekly();
+      //$schedule->call('\App\Http\Controllers\ProjectController@resetProcessedProjects')->weekly();
+
     }
 
     /**
