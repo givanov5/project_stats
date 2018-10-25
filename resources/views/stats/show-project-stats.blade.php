@@ -2,6 +2,7 @@
 <!-- /.box-body -->
 @section('content')
     <div class="box-body">
+        {{----}}
         <div class="chart">
             <canvas id="projectChart" style="height:250px"></canvas>
         </div>
