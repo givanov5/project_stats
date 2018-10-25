@@ -12,10 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('layout.content');
 });
 
-
+Route::get('stats/list-projects', 'StatsController@listAllProjects');
+Route::get('stats/show-stats/{projectId}', 'StatsController@showProjectStats');
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();

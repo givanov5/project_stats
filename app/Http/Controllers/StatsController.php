@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class StatsController extends Controller
 {
@@ -21,9 +22,28 @@ class StatsController extends Controller
     $this->projectModel = new Project;
   }
 
-  public function getProjectStats($id)
+  public function listAllProjects()
   {
-    $projectStats = Project::getProjectStats($id);
+    $projects = $this->projectModel->getUniqueProjects();
+
+    return response()->view(
+      'stats.list-all-projects',
+      ['projects' => $projects],
+      200
+    );
+  }
+
+  public function showProjectStats($projectId)
+  {
+    //var_dump('isdide action');die;
+    $projectStats = $this->projectModel->getProjectStats($projectId);
+    //var_dump($projectStats);die;
+
+    return response()->view(
+      'stats.show-project-stats',
+      ['projectStats' => $projectStats],
+      200
+    );
   }
 
 }

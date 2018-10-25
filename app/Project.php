@@ -31,4 +31,12 @@ class Project extends Model
         ->where('id', $id)
         ->get();
     }
+
+    public function getUniqueProjects()
+    {
+      return static::select('id', 'projectId', 'name')
+        ->distinct()
+        //->groupBy('projectId')
+        ->get();
+    }
 }
