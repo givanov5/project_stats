@@ -35,13 +35,29 @@ class StatsController extends Controller
 
   public function showProjectStats($projectId)
   {
-    //var_dump('isdide action');die;
     $projectStats = $this->projectModel->getProjectStats($projectId);
-    //var_dump($projectStats);die;
+    //echo '<pre>';
+    //var_dump($projectStats->toArray());die;
+    $tasksToDo = [];
+    $tasksDone = [];
+    $dates = [];
+
+    /** @var \App\Project $projectStat */
+    foreach ($projectStats as $projectStat) {
+      $tasksToDo[] = $projectStat->tasksTodo;
+      $tasksDone[] = $projectStat->tasksCompleted;
+      $dates[] = $projectStat->updated_at->format('d/m/Y');
+    }
+    //var_dump(json_encode($dates), $dates);die;
+    //var_dump($tasksToDo,$tasksDone,$dates );die;
 
     return response()->view(
       'stats.show-project-stats',
-      ['projectStats' => $projectStats],
+      [
+        'tasksToDo' => $tasksToDo,
+        'tasksDone' => $tasksDone,
+        'dates' => $dates,
+      ],
       200
     );
   }

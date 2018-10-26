@@ -25,18 +25,17 @@ class Project extends Model
       return static::query()->update(['isProcessed' => 0]);
     }
 
-    public function getProjectStats($id)
+    public function getProjectStats($projectId)
     {
       return static::where('isProcessed', 1)
-        ->where('id', $id)
+        ->where('projectId', $projectId)
         ->get();
     }
 
     public function getUniqueProjects()
     {
-      return static::select('id', 'projectId', 'name')
+      return static::select('id', 'projectId', 'name', 'tasksCompleted', 'tasksTodo')
         ->distinct()
-        //->groupBy('projectId')
         ->get();
     }
 }

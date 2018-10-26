@@ -2,42 +2,55 @@
 <!-- /.box-body -->
 @section('content')
     <div class="box-body">
-        {{----}}
-        <div class="chart">
-            <canvas id="projectChart" style="height:250px"></canvas>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="chart-responsive">
+                    <div class="chart">
+                        <canvas id="projectChart" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <ul class="chart-legend clearfix">
+                    <li><i class="fa fa-circle text-red"></i>Tasks To Do</li>
+                    <li><i class="fa fa-circle text-green"></i>Tasks Done</li>
+                </ul>
+            </div>
+            <!-- /.col -->
         </div>
+
     </div>
     @push('scripts')
         <script>
         $(document).ready(function(){
 
             // Get context with jQuery - using jQuery's .get() method.
-            var projectChartCanvas = $('#projectChart').get(0).getContext('2d')
+            var projectChartCanvas = $('#projectChart').get(0).getContext('2d');
             // This will get the first returned node in the jQuery collection.
-            var projectChart       = new Chart(projectChartCanvas)
+            var projectChart = new Chart(projectChartCanvas);
 
             var projectChartData = {
-              labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+              labels  : {!! json_encode($dates) !!},
               datasets: [
                 {
-                  label               : 'Electronics',
-                  fillColor           : 'rgba(210, 214, 222, 1)',
-                  strokeColor         : 'rgba(210, 214, 222, 1)',
-                  pointColor          : 'rgba(210, 214, 222, 1)',
-                  pointStrokeColor    : '#c1c7d1',
+                  label               : 'Tasks To Do',
+                  fillColor           : '#f56954',
+                  strokeColor         : '#f56954',
+                  pointColor          : '#f56954',
+                  pointStrokeColor    : '#f56954',
                   pointHighlightFill  : '#fff',
                   pointHighlightStroke: 'rgba(220,220,220,1)',
-                  data                : [65, 59, 80, 81, 56, 55, 40]
+                  data                : {{json_encode($tasksToDo)}}
                 },
                 {
-                  label               : 'Digital Goods',
-                  fillColor           : 'rgba(60,141,188,0.9)',
-                  strokeColor         : 'rgba(60,141,188,0.8)',
-                  pointColor          : '#3b8bba',
-                  pointStrokeColor    : 'rgba(60,141,188,1)',
+                  label               : 'Tasks Done',
+                  fillColor           : '#00a65a',
+                  strokeColor         : '#00a65a',
+                  pointColor          : '#00a65a',
+                  pointStrokeColor    : '#00a65a',
                   pointHighlightFill  : '#fff',
                   pointHighlightStroke: 'rgba(60,141,188,1)',
-                  data                : [28, 48, 40, 19, 86, 27, 90]
+                  data                : {{json_encode($tasksDone)}}
                 }
               ]
             }
@@ -73,8 +86,15 @@
               datasetStrokeWidth      : 2,
               //Boolean - Whether to fill the dataset with a color
               datasetFill             : true,
+              legend : {
+                display: true,
+                position: 'bottom',
+                labels: {
+                  fontColor: 'rgb(255, 99, 132)'
+                }
+              },
               //String - A legend template
-              {{--legendTemplate          : '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].lineColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',--}}
+              legendTemplate          : '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].lineColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
               //Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
               maintainAspectRatio     : true,
               //Boolean - whether to make the chart responsive to window resizing

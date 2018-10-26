@@ -24,6 +24,8 @@
               <th>Id</th>
               <th>Project Key</th>
               <th>Project Name</th>
+              <th>Tasks to do</th>
+              <th>Tasks done</th>
               <th>Actions</th>
             </tr>
             </thead>
@@ -35,8 +37,10 @@
                       <td>{{ $project->id }}</td>
                       <td>{{ $project->projectId }}</td>
                       <td>{{ $project->name }}</td>
+                      <td>{{ $project->tasksTodo }}</td>
+                      <td>{{ $project->tasksCompleted }}</td>
                       <td>
-                        <a href="{{ action('StatsController@showProjectStats', ['projectId' => $project->id]) }}">Show stats</a>
+                        <a href="{{ action('StatsController@showProjectStats', ['projectId' => $project->projectId]) }}">Show stats</a>
                       </td>
                     </tr>
                 @endforeach
@@ -58,13 +62,13 @@
         $('#project-stats').DataTable({
           'paging'      : true,
           'lengthChange': false,
-          'searching'   : false,
+          'searching'   : true,
           'ordering'    : true,
           'info'        : true,
           'autoWidth'   : false,
           "pageLength"  : 50,
           'columnDefs'  : [
-            {"orderable": false, "targets": [ 3 ]}
+            {"orderable": false, "targets": [ 5 ]}
           ]
         })
       });
